@@ -1,12 +1,11 @@
 package com.example.ms_commande.service;
 
-import com.example.ms_commande.dto.ArticleCommandeDTO;
-import com.example.ms_commande.dto.CommandeDTO;
+import com.example.ms_commande.client.LivraisonServiceClient;
+import com.example.ms_commande.dto.*;
 import com.example.ms_commande.model.ArticleCommande;
 import com.example.ms_commande.model.Commande;
 import com.example.ms_commande.model.Produit;
 import com.example.ms_commande.model.PaymentStatus;
-import com.example.ms_commande.dto.ProduitDTO;
 import com.example.ms_commande.repository.ArticleCommandeRepository;
 import com.example.ms_commande.repository.CommandeRepository;
 import com.example.ms_commande.repository.ProduitRepository;
@@ -57,7 +56,7 @@ public class CommandeService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
+    // to create orders
     @Transactional
     public Commande creerCommande(Integer idClient, List<ArticleCommande> articles) {
         Commande commande = new Commande();
@@ -80,6 +79,9 @@ public class CommandeService {
         return commandeRepository.save(savedCommande);
     }
 
+    @Autowired
+    private LivraisonServiceClient livraisonProxy;
+
     @Transactional
     public boolean validerCommande(Integer commandeId) {
         Optional<Commande> commandeOpt = commandeRepository.findById(commandeId);
@@ -88,6 +90,32 @@ public class CommandeService {
             boolean result = commande.validerCommande();
             if (result) {
                 commandeRepository.save(commande);
+
+                // Prepare DTO
+                LivraisonCommandeDto dto = new LivraisonCommandeDto();
+                dto.setIdCommande(commande.getId());
+                dto.setIdClient(commande.getIdClient());
+                dto.setQuantite(commande.getArticles().get(0).getQuantite());
+                dto.setIdArticle(commande.getArticles().get(0).getId());
+                dto.setPrixArticle(commande.getArticles().get(0).getPrixTotal());
+                dto.setIdCommercant(commande.getArticles().get(0).getProduit().getIdCommercant());
+
+                LocationDto location = new LocationDto();
+                location.setLat(0);  // Replace with real coordinates
+                location.setLng(0);
+                dto.setLocation(location);
+
+                dto.setLivraisonPayment(0.0);
+                // 👉 Debug log before Feign call
+                System.out.println("🚀 Sending to ms-livraison: " + dto);
+                // Send to ms-livraison
+                try {
+                    livraisonProxy.envoyerCommande(dto);
+                    System.out.println("✅ Commande sent to ms-livraison");
+                } catch (Exception e) {
+                    System.err.println("❌ Failed to send commande to ms-livraison: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
             return result;
         }
