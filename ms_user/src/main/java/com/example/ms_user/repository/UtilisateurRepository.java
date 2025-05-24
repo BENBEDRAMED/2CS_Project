@@ -1,0 +1,16 @@
+package com.example.ms_user.repository;
+
+import com.example.ms_user.model.Role;
+import com.example.ms_user.model.Utilisateur;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UtilisateurRepository extends JpaRepository<Utilisateur, Integer> {
+    Optional<Utilisateur> findByEmail(String email);
+    List<Utilisateur> findByRole(Role role);
+
+}

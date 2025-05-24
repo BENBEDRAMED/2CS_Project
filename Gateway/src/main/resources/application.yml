@@ -1,0 +1,45 @@
+server:
+  port: 7777
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+
+
+spring:
+  application:
+    name: ms-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: route1
+          predicates:
+            - Path=/service-user/**
+          filters:
+            - RewritePath=/service-user/(?<s>.*), /${s}
+
+          uri: lb://ms-user
+
+        - id: route2
+          predicates:
+            - Path=/service-commande/**
+          filters:
+            - RewritePath=/service-commande/(?<s>.*), /${s}
+          uri: lb://ms-commande
+        - id: route3
+          predicates:
+            - Path=/service-payment/**
+          filters:
+            - RewritePath=/service-payment/(?<s>.*), /${s}
+          uri: lb://ms-payment
+
+
+
+
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
