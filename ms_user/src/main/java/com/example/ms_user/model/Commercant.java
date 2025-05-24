@@ -1,8 +1,12 @@
 package com.example.ms_user.model;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
+
+
+
 
 @Entity
 @Getter
@@ -14,5 +18,8 @@ public class Commercant extends Utilisateur {
     private String adresse;
 
     private String NumRC;
+
+    @Embedded
+    private Locations location;
 
 }
