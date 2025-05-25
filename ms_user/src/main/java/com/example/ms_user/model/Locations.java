@@ -1,47 +1,20 @@
 package com.example.ms_user.model;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
+import java.util.List;
+
+@Data
 @Embeddable
 public class Locations {
 
     private String type = "Point"; // Always "Point"
 
-    private Double longitude;
-    private Double latitude;
+    private List<Double> coordinates; // [longitude, latitude]
 
-    public Locations() {
-        this.type = "Point";
-    }
-
-    public Locations(Double longitude, Double latitude) {
-        this.type = "Point";
-        this.longitude = longitude;
-        this.latitude = latitude;
-    }
-
-    // Getters and setters
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
 }

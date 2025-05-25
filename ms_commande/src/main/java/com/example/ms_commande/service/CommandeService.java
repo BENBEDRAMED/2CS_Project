@@ -100,9 +100,7 @@ public class CommandeService {
                 dto.setPrixArticle(commande.getArticles().get(0).getPrixTotal());
                 dto.setIdCommercant(commande.getArticles().get(0).getProduit().getIdCommercant());
 
-                LocationDto location = new LocationDto();
-                location.setLat(0);  // Replace with real coordinates
-                location.setLng(0);
+                LocationDto location = new LocationDto(-0.6306, 35.1992); // longitude, latitude
                 dto.setLocation(location);
 
                 dto.setLivraisonPayment(0.0);

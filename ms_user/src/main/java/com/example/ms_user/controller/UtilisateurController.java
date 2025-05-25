@@ -1,5 +1,6 @@
 package com.example.ms_user.controller;
 
+import com.example.ms_user.dto.DemandeInscriptionDTO;
 import com.example.ms_user.model.*;
 import com.example.ms_user.repository.LivreurRepository;
 import com.example.ms_user.service.UtilisateurService;
@@ -34,7 +35,8 @@ public class UtilisateurController {
 
     // ✅ Soumettre une demande d'inscription (livreur ou commerçant)
     @PostMapping("/inscription/demande")
-    public ResponseEntity<DemandeInscription> soumettreDemande(@RequestBody DemandeInscription demande) {
+    public ResponseEntity<DemandeInscription> soumettreDemande(@RequestBody DemandeInscriptionDTO demande) {
+        System.out.println(demande);
         return ResponseEntity.ok(utilisateurService.soumettreDemande(demande));
     }
 
@@ -117,7 +119,7 @@ public class UtilisateurController {
         utilisateurService.updateAvailability(driverId, available);
         return ResponseEntity.ok("Availability updated");
     }
-
+    // get Livreur by id
     @GetMapping("/livreur/{id}")
     public ResponseEntity<Livreur> getLivreur(@PathVariable int id) {
         Optional<Livreur> livreur = utilisateurService.getLivreurById(id);
@@ -125,6 +127,13 @@ public class UtilisateurController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // get Commercant By id
 
+    @GetMapping("/commercant/{id}")
+    public ResponseEntity<Commercant> getCommercant(@PathVariable int id) {
+        Optional<Commercant> commercant = utilisateurService.getCommercantById(id);
+        return commercant.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
 }

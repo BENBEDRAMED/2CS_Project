@@ -26,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/utilisateurs/**").permitAll() // Public endpoints
+                        .requestMatchers("/api/auth/**", "/api/utilisateurs/**").permitAll()// Public endpoints
                         .requestMatchers("/api/utilisateurs/demandes/**").hasRole("ADMIN") // Admin-only
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )

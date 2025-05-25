@@ -1,5 +1,6 @@
 package com.example.ms_user.service;
 
+import com.example.ms_user.dto.DemandeInscriptionDTO;
 import com.example.ms_user.dto.LivreurDto;
 import com.example.ms_user.model.*;
 import com.example.ms_user.proxy.LivreurLiv;
@@ -43,7 +44,8 @@ public class UtilisateurService {
     }
 
     // ✅ Soumission d'une demande d'inscription (livreur ou commerçant)
-    public DemandeInscription soumettreDemande(DemandeInscription demande) {
+    public DemandeInscription soumettreDemande(DemandeInscriptionDTO demande) {
+
         demande.setMotDePasse(passwordEncoder.encode(demande.getMotDePasse())); // Hasher le mot de passe
         demande.setStatut(StatutDemande.EN_ATTENTE); // Par défaut, la demande est en attente
 
@@ -53,7 +55,24 @@ public class UtilisateurService {
             demande.setRole(Role.ROLE_COMMERCANT);
         }
 
-        return demandeRepository.save(demande);
+        Locations locations = new Locations();
+        locations.setType("Point");
+        locations.setCoordinates(demande.getLocation().getCoordinates());
+
+        DemandeInscription demandeIns = DemandeInscription.builder()
+                .nom(demande.getNom())
+                .email(demande.getEmail())
+                .numeroDeTelephone(demande.getNumeroDeTelephone())
+                .motDePasse(demande.getMotDePasse())
+                .role(demande.getRole())
+                .adresse(demande.getAdresse())
+                .nomBoutique(demande.getNomBoutique())
+                .numRC(demande.getNumRC())
+                .statut(demande.getStatut())
+                .location(locations)
+                .build();
+
+        return demandeRepository.save(demandeIns);
     }
 
     // ✅ Lister toutes les demandes en attente
@@ -104,6 +123,7 @@ public class UtilisateurService {
                     commercant.setNomBoutique(demande.getNomBoutique());
                     commercant.setAdresse(demande.getAdresse());
                     commercant.setNumRC(demande.getNumRC());
+                    commercant.setLocation(demande.getLocation());
                     commercantRepository.save(commercant);
                 }
                 demande.setStatut(StatutDemande.ACCEPTEE);
@@ -128,6 +148,11 @@ public class UtilisateurService {
     // get livreur by id
     public Optional<Livreur> getLivreurById(int id) {
         return livreurRepository.findById(id);
+    }
+
+    // get commercant by id
+    public Optional<Commercant> getCommercantById(int id) {
+        return commercantRepository.findById(id);
     }
 
     // ✅ Récupérer un utilisateur par email

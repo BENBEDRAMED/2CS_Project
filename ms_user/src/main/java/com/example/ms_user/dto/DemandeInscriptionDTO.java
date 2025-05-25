@@ -1,33 +1,27 @@
-package com.example.ms_user.model;
+package com.example.ms_user.dto;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.example.ms_user.model.Locations;
+import com.example.ms_user.model.Role;
+import com.example.ms_user.model.StatutDemande;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
-@Setter
-@Entity
-@Builder @AllArgsConstructor @NoArgsConstructor
-public class DemandeInscription {
+@Builder @Data
+public class DemandeInscriptionDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
     private String nom;
     private String email;
     private String numeroDeTelephone;
     private String motDePasse;
-
-    @Enumerated(EnumType.STRING)
     private Role role;  // Role demandé (LIVREUR ou COMMERCANT)
-
     private String adresse;
     private String nomBoutique; // Pour commercant uniquement
     private String numRC; // Pour commercant uniquement
-
-    @Enumerated(EnumType.STRING)
     private StatutDemande statut = StatutDemande.EN_ATTENTE; // EN_ATTENTE, ACCEPTEE, REFUSEE
+    private LocationDTO location;
 
-    @Embedded
-    private Locations location;
 }
